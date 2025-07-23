@@ -28,7 +28,13 @@ while True:
     for (x,y,w,h) in faces:
         crop_img=frame[y:y+h, x:x+w, :]
         resized_img=cv2.resize(crop_img, (50,50)).flatten().reshape(1,-1)
-        output=knn.predict(resized_img)
+        distances, indices = knn.kneighbors(resized_img)
+        threshold = 1000  # adjust this value based on your data and testing
+        if distances[0][0] > threshold:
+            output = "Unknown"
+        else:
+            output = knn.predict(resized_img)[0]
+        
         ts=time.time()
         date=datetime.fromtimestamp(ts).strftime("%d-%m-%Y")
         timestamp=datetime.fromtimestamp(ts).strftime("%H:%M-%S")
